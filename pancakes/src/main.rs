@@ -6,10 +6,7 @@ struct Pancakes;
 
 #[allow(dead_code)]
 #[derive(HelloMacro)]
-enum Apples {
-    Red,
-    Green,
-}
+enum Apples {}
 
 fn main() {
     Pancakes::hello_macro();

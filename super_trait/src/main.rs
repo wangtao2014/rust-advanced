@@ -18,6 +18,18 @@ fn main() {
 
     let p = Point { x: 1, y: 2 };
     p.outline_print();
+
+    test_alias();
+
+    test_sized_trait();
+
+    let result = do_twice(add_one, 5);
+    assert_eq!(result, 12);
+
+    test_closure();
+    // let result = returns_closure();
+    // let num = result(12);
+    // println!("{:?}", result);
 }
 
 /// 关联类型在 trait 定义中指定占位符类型
@@ -119,3 +131,65 @@ trait OutlinePrint: fmt::Display {
         println!("{}", "*".repeat(len + 4));
     }
 }
+
+/// 类型别名
+pub fn test_alias() {
+    type KilloMeters = i32;
+    let x: i32 = 5;
+    let y: KilloMeters = x * 2;
+
+    println!("x + y = {}", x + y);
+
+}
+
+// never type 永远不会返回值
+// ! 在函数从不返回的时候充当返回值
+pub fn test_never_type() -> ! {
+    loop {
+        println!("hello world!");
+    }
+
+    panic!("hello world!"); // panic 不会返回值
+}
+
+// 动态大小类型和 Sized trait
+pub fn test_sized_trait() {
+    let s1: &str = "hello world";
+    let s2: &str = "How's it going?";
+
+    // doesn't have a size known at compile-time
+    println!("{}, {}", s1, s2);
+}
+
+// 函数指针
+fn add_one(x: i32) -> i32 {
+    x + 1
+}
+
+fn do_twice(f: fn(i32) -> i32, s: i32) -> i32 {
+    f(s) + f(s)
+}
+
+#[allow(dead_code)]
+#[derive(Debug)]
+enum Status {
+    Value(u32),
+    Stop,
+}
+
+pub fn test_closure() {
+    let numbers = vec![1, 2, 3, 4, 5];
+    // let results: Vec<String> = numbers.iter().map(|i| i.to_string()).collect(); // 闭包
+    let results: Vec<String> = numbers.iter().map(ToString::to_string).collect(); // 函数指针
+    println!("{:?}", results);
+
+    let list_of_statuses: Vec<Status> = (0u32..20).map(Status::Value).collect();
+    println!("{:?}", list_of_statuses);
+}
+
+// 返回闭包
+fn returns_closure() -> Box<dyn Fn(i32) -> i32> {
+    Box::new(|x| x + 1)
+}
+
+
